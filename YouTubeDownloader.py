@@ -33,6 +33,8 @@ root = Tk()
 root.title("Youtube Downloader :>")
 root.geometry("1400x400")
 
+root.resizable(width=False, height=False)
+
 bg = PhotoImage(file="897-989.png")
 my_label = Label(root, image=bg)
 my_label.place(x=0,y=0, relwidth=1, relheight=1)
