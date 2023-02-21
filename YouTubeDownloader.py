@@ -15,6 +15,8 @@ def clear():
 
 def Download():
     video = entry.get()
+    with open('path.json', 'r', encoding='utf-8') as file:
+        Pathfile = json.load(file)
     if video:
         yt = YouTube(video)
         file = yt.streams.get_lowest_resolution()
@@ -22,13 +24,16 @@ def Download():
         file.download(oputh)
         print("успешно")
         errmg.set("Entry link pls:>")
-        errmg2.set("Successfully")
+        errmg2.set(f"Successfully {yt.title}")
+        clear()
     else:
         errmg2.set("Поле ввода ссылки пустое")
         print("Empty")
 
 def DownloadMP3():
     video = entry.get()
+    with open('path.json', 'r', encoding='utf-8') as file:
+        Pathfile = json.load(file)
     if video:
         try:
             yt = YouTube(video)
@@ -39,18 +44,16 @@ def DownloadMP3():
             base, ext = os.path.splitext(out_file)
             new_file = base + '.mp3'
             os.rename(out_file, new_file)
-
-            # result of success
-            print(yt.title + " has been successfully downloaded.")
+            errmg2.set(f"Successfully {yt.title}")
         except:
-            errmg2.set("Не указан путь")
+            print(Pathfile)
+            errmg2.set("Не указан путь. "+"Или файл уже есть в этой папке")
     else:
         errmg2.set("Поле ввода ссылки пустое")
         print("Empty")
 
 def choose():
     global directory
-    global Pathfile
     directory = fd.askdirectory(title="Открыть папку", initialdir="/")
     with open("path.json", 'w',encoding='utf-8' ) as file:
         json.dump(directory, file, ensure_ascii=False)
