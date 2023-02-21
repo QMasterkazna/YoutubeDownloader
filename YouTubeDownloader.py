@@ -4,8 +4,12 @@ from tkinter import ttk
 
 from pytube import YouTube
 
+import os
+
+import json
 
 def clear():
+    errmg2.set("Очищено")
     entry.delete(0, END)
 
 
@@ -14,19 +18,48 @@ def Download():
     if video:
         yt = YouTube(video)
         file = yt.streams.get_lowest_resolution()
-        oputh = (f"{directory}")
+        oputh = (f"{Pathfile}")
         file.download(oputh)
         print("успешно")
         errmg.set("Entry link pls:>")
         errmg2.set("Successfully")
     else:
+        errmg2.set("Поле ввода ссылки пустое")
         print("Empty")
 
+def DownloadMP3():
+    video = entry.get()
+    if video:
+        try:
+            yt = YouTube(video)
+            file = yt.streams.filter(only_audio=True).first()
+            oputh = (f"{Pathfile}")
+            out_file = file.download(output_path=oputh)
+            # save the file
+            base, ext = os.path.splitext(out_file)
+            new_file = base + '.mp3'
+            os.rename(out_file, new_file)
+
+            # result of success
+            print(yt.title + " has been successfully downloaded.")
+        except:
+            errmg2.set("Не указан путь")
+    else:
+        errmg2.set("Поле ввода ссылки пустое")
+        print("Empty")
 
 def choose():
     global directory
+    global Pathfile
     directory = fd.askdirectory(title="Открыть папку", initialdir="/")
-    directory_choose.set(directory)
+    with open("path.json", 'w',encoding='utf-8' ) as file:
+        json.dump(directory, file, ensure_ascii=False)
+    with open('path.json', 'r', encoding='utf-8') as rfile:
+        Pathfile = json.load(rfile)
+    directory_choose.set(Pathfile)
+
+with open('path.json','r', encoding='utf-8') as PathtoReadFile:
+    pathToSave = json.load(PathtoReadFile)
 
 
 root = Tk()
@@ -41,7 +74,7 @@ my_label.place(x=0,y=0, relwidth=1, relheight=1)
 
 errmg2 = StringVar()
 errmg2.set("First job")
-successfully_label = ttk.Label(foreground="green", textvariable=errmg2, wraplength=250)
+successfully_label = ttk.Label(foreground="red", textvariable=errmg2, wraplength=250)
 successfully_label.pack(padx=5, pady=5, anchor=NW)
 
 errmg = StringVar()
@@ -51,11 +84,14 @@ successfully_label.pack(padx=5, pady=5, anchor=NW)
 
 entry = ttk.Entry()
 entry.pack(anchor=NW, padx=6, pady=6)
-btn = ttk.Button(text="Click", command=Download)
+btn = ttk.Button(text="Download", command=Download)
 btn.pack(anchor=NW, padx=6, pady=6)
 
+btn_mp3= ttk.Button(text="Download MP3", command=DownloadMP3)
+btn_mp3.pack(anchor=NW, padx=6, pady=6)
+
 directory_choose = StringVar()
-directory_choose.set("Nothing")
+directory_choose.set(pathToSave)
 directory_choose_label = ttk.Label(foreground="green", textvariable=directory_choose, wraplength=250)
 directory_choose_label.pack(padx=3, pady=3, anchor=NW)
 
