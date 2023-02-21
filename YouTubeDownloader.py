@@ -18,14 +18,18 @@ def Download():
     with open('path.json', 'r', encoding='utf-8') as file:
         Pathfile = json.load(file)
     if video:
-        yt = YouTube(video)
-        file = yt.streams.get_lowest_resolution()
-        oputh = (f"{Pathfile}")
-        file.download(oputh)
-        print("успешно")
-        errmg.set("Entry link pls:>")
-        errmg2.set(f"Successfully {yt.title}")
-        clear()
+        try:
+            yt = YouTube(video)
+            file = yt.streams.get_lowest_resolution()
+            oputh = (f"{Pathfile}")
+            file.download(oputh)
+            print("успешно")
+            errmg.set("Entry link pls:>")
+            errmg2.set(f"Successfully {yt.title}")
+            clear()
+        except:
+            print(Pathfile)
+            errmg2.set("Не указан путь. "+"Или файл уже есть в этой папке")
     else:
         errmg2.set("Поле ввода ссылки пустое")
         print("Empty")
